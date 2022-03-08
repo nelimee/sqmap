@@ -2,13 +2,14 @@ import typing as ty
 
 from qiskit import QuantumCircuit
 from qiskit.result import Result
+from qiskit.providers.aer import AerSimulator, AerJob, AerJobSet
 from qiskit.providers.ibmq import IBMQBackend
 from qiskit.providers.ibmq.managed import IBMQJobManager, ManagedJobSet, ManagedResults
 
 
 def execute(
     circuits: ty.List[QuantumCircuit],
-    backend: IBMQBackend,
+    backend: ty.Union[IBMQBackend, AerSimulator],
     job_name: ty.Optional[str] = None,
     tags: ty.Optional[ty.List[str]] = None,
     **kwargs,
@@ -32,9 +33,15 @@ def execute(
         Refer to the documentation on :func:`qiskit.compiler.assemble`
         for details on these arguments.
     """
-    manager = IBMQJobManager()
-    job: ManagedJobSet = manager.run(
-        circuits, backend, name=job_name, job_tags=tags, run_config=kwargs
-    )
-    results: ManagedResults = job.results()
-    return results.combine_results()
+    if isinstance(backend, IBMQBackend):
+        manager = IBMQJobManager()
+        managed_job: ManagedJobSet = manager.run(
+            circuits, backend, name=job_name, job_tags=tags, run_config=kwargs
+        )
+        results: ManagedResults = managed_job.results()
+        return results.combine_results()
+    else:
+        job: ty.Union[AerJob, AerJobSet] = backend.run(
+            circuits, name=job_name, job_tags=tags, run_config=kwargs
+        )
+        return job.result()

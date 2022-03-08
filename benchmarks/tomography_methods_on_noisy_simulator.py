@@ -2,9 +2,9 @@ import typing as ty
 import numpy
 import matplotlib.pyplot as plt
 
-from qiskit import QuantumCircuit, execute, IBMQ
+from qiskit import QuantumCircuit, IBMQ
 from qiskit.providers.aer import AerSimulator
-from qiskit.quantum_info.states import DensityMatrix, state_fidelity
+from qiskit.quantum_info.states import state_fidelity
 
 from sqt.circuits import one_qubit_tomography_circuits
 from sqt.basis.tetrahedral import TetrahedralMeasurementBasis
@@ -15,6 +15,7 @@ from sqt.fit.exact import get_one_qubit_exact_density_matrix
 
 from sqmap.circuits import get_approximately_equidistant_circuits
 from sqmap.visualisation.flatmap import plot_bloch_vector_2d
+from sqmap.execution import execute
 
 print("Recovering data from IBMQ...")
 if not IBMQ.active_account():
@@ -23,7 +24,7 @@ provider = IBMQ.get_provider(hub="ibm-q-lanl", group="lanl", project="quantum-si
 backend = provider.get_backend("ibmq_bogota")
 
 
-N = 1000
+N = 10
 METHODS = {
     "grad": post_process_tomography_results_grad,
     "mle": post_process_tomography_results_mle,
@@ -44,7 +45,7 @@ tomography_circuits: ty.List[ty.List[QuantumCircuit]] = [
 flattened_circuits: ty.List[QuantumCircuit] = sum(tomography_circuits, start=[])
 
 print("Simulating circuits...")
-result = execute(flattened_circuits, simulator, shots=2 ** 10).result()
+result = execute(flattened_circuits, simulator, shots=2 ** 10)
 
 print("Computing density matrices...")
 density_matrices: ty.List[ty.Dict[str, ty.List[numpy.ndarray]]] = list()
@@ -70,7 +71,6 @@ for circuit in raw_circuits:
         ]
 
 print("Plotting...")
-
 for qubit_index in range(qubit_number):
     fig, axes = plt.subplots(2, 2)
     axes = axes.flatten()
