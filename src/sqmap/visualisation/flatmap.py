@@ -20,6 +20,21 @@ def _compute_infidelity(ideal: numpy.ndarray, approximated: numpy.ndarray) -> fl
     )
 
 
+def account_for_periodicity(
+    X: numpy.ndarray, Y: numpy.ndarray, Z: numpy.ndarray
+) -> ty.Tuple[numpy.ndarray, numpy.ndarray, numpy.ndarray]:
+    # For angles that are very close to -pi or pi, we duplicate the values in order to
+    # have a "kind of periodicity" when plotting.
+    (indices_minus_pi,) = numpy.nonzero(numpy.isclose(Y, -numpy.pi))
+    (indices_plus_pi,) = numpy.nonzero(numpy.isclose(Y, numpy.pi))
+    x = numpy.concatenate([X, X[indices_minus_pi], X[indices_plus_pi]])
+    y = numpy.concatenate(
+        [Y, Y[indices_minus_pi] + 2 * numpy.pi, Y[indices_plus_pi] - 2 * numpy.pi]
+    )
+    z = numpy.concatenate([Z, Z[indices_minus_pi], Z[indices_plus_pi]])
+    return x, y, z
+
+
 def plot_bloch_vector_2d(
     ideal_points_cartesian: ty.List[numpy.ndarray],
     density_matrices: ty.List[numpy.ndarray],
@@ -30,6 +45,7 @@ def plot_bloch_vector_2d(
     fig=None,
     ax=None,
     cax=None,
+    clabel: ty.Optional[str] = None,
     vmin: float = None,
     vmax: float = None,
 ):
@@ -78,23 +94,15 @@ def plot_bloch_vector_2d(
             )
         ]
     )
-    # For angles that are very close to -pi or pi, we duplicate the values in order to
-    # have a "kind of periodicity" when plotting.
-    (indices_minus_pi,) = numpy.nonzero(numpy.isclose(Y, -numpy.pi))
-    (indices_plus_pi,) = numpy.nonzero(numpy.isclose(Y, numpy.pi))
-    X = numpy.concatenate([X, X[indices_minus_pi], X[indices_plus_pi]])
-    Y = numpy.concatenate(
-        [Y, Y[indices_minus_pi] + 2 * numpy.pi, Y[indices_plus_pi] - 2 * numpy.pi]
-    )
-    Z = numpy.concatenate([Z, Z[indices_minus_pi], Z[indices_plus_pi]])
 
+    X, Y, Z = account_for_periodicity(X, Y, Z)
     # We might not have a lot of points. In order to have a visually
     # good-looking graph, we interpolate the results on a finer "grid"
-    # composed of 200 points.
+    # composed of 400 points.
     # The interpolation is linear because we have no idea how this data
     # should behave, so we need to pick the default choice that will
     # likely not mislead us when interpreting the data.
-    n = 200
+    n = 400
     phi = numpy.linspace(-numpy.pi, numpy.pi, n)
     theta = numpy.linspace(0, numpy.pi, n)
     X_plot, Y_plot = numpy.meshgrid(theta, phi)
@@ -119,7 +127,8 @@ def plot_bloch_vector_2d(
     if cax is None:
         divider = make_axes_locatable(ax)
         cax = divider.append_axes("right", size="5%", pad=0.05)
-
+    if clabel is not None:
+        cax.set_title(clabel)
     fig.colorbar(c, cax=cax)
     ax.set_title(title)
     return fig, ax, cax
@@ -128,6 +137,9 @@ def plot_bloch_vector_2d(
 def plot_bloch_vector_displacement_arrow_field_2d(
     ideal_points_cartesian: ty.List[numpy.ndarray],
     density_matrices: ty.List[numpy.ndarray],
+    compute_z_data: ty.Callable[
+        [numpy.ndarray, numpy.ndarray], float
+    ] = _compute_infidelity,
     title: ty.Optional[str] = None,
     fig=None,
     ax=None,
@@ -157,7 +169,15 @@ def plot_bloch_vector_displacement_arrow_field_2d(
     :param vmax: maximum value for the colorbar.
     """
     fig, ax, cax = plot_bloch_vector_2d(
-        ideal_points_cartesian, density_matrices, title, fig, ax, cax, vmin, vmax
+        ideal_points_cartesian,
+        density_matrices,
+        compute_z_data=compute_z_data,
+        title=title,
+        fig=fig,
+        ax=ax,
+        cax=cax,
+        vmin=vmin,
+        vmax=vmax,
     )
     # Compute the displacement vectors
     obtained_points_spherical = numpy.array(
@@ -168,8 +188,8 @@ def plot_bloch_vector_displacement_arrow_field_2d(
     )
 
     # X and Y are the spherical angles
-    X = ideal_points_spherical[:, 1]
-    Y = ideal_points_spherical[:, 2]
+    X = ideal_points_spherical[:, 1]  # theta, inclination angle
+    Y = ideal_points_spherical[:, 2]  # phi,   azimuth angle
 
     # We also want to plot the displacement vectors. To do so, we compute
     # the displacement for each point.
@@ -180,6 +200,9 @@ def plot_bloch_vector_displacement_arrow_field_2d(
     U[U > numpy.pi] -= 2 * numpy.pi
     V[V < -numpy.pi] += 2 * numpy.pi
     V[V > numpy.pi] -= 2 * numpy.pi
+
+    _, _, U = account_for_periodicity(X, Y, U)
+    X, Y, V = account_for_periodicity(X, Y, V)
 
     # Plot the displacement vectors.
     ax.quiver(
