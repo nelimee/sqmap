@@ -12,8 +12,8 @@ from sqt.fit.grad import post_process_tomography_results_grad
 from sqt.fit.mle import post_process_tomography_results_mle
 from sqt.fit.lssr import post_process_tomography_results_lssr
 from sqt.fit.exact import get_one_qubit_exact_density_matrix
+from sqt.basis.equidistant import get_approximately_equidistant_circuits
 
-from sqmap.circuits import get_approximately_equidistant_circuits
 from sqmap.visualisation.flatmap import plot_bloch_vector_2d
 
 N = 1000

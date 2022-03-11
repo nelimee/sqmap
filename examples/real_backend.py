@@ -12,19 +12,10 @@ from qiskit.circuit.quantumcircuit import QuantumCircuit
 from sqt.circuits import one_qubit_tomography_circuits
 from sqt.basis.tetrahedral import TetrahedralMeasurementBasis
 from sqt.fit.mle import post_process_tomography_results_mle
+from sqt.basis.equidistant import get_approximately_equidistant_circuits
+from sqt.passes import compile_circuits
 
-from sqmap.circuits import get_approximately_equidistant_circuits
 from sqmap.visualisation.flatmap import plot_bloch_vector_displacement_arrow_field_2d
-
-
-def compile_circuits(circuits: ty.List[QuantumCircuit]) -> ty.List[QuantumCircuit]:
-    """Merge 1-qubit gates with the Optimize1qGateIntoRzSX pass."""
-    from qiskit.transpiler import PassManager
-    from sqt.passes import Optimize1qGateIntoRzSX
-
-    pass_sspin = Optimize1qGateIntoRzSX()
-    pm_sspin = PassManager(passes=[pass_sspin])
-    return pm_sspin.run(circuits)
 
 
 try:
