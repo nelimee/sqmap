@@ -91,6 +91,7 @@ def plot_over_bloch_sphere_2d(
         ]
     )
 
+    average_value: float = numpy.mean(Z)
     X, Y, Z = account_for_periodicity(X, Y, Z)
     # We might not have a lot of points. In order to have a visually
     # good-looking graph, we interpolate the results on a finer "grid"
@@ -125,7 +126,8 @@ def plot_over_bloch_sphere_2d(
         cax = divider.append_axes("right", size="5%", pad=0.05)
     if clabel is not None:
         cax.set_title(clabel)
-    fig.colorbar(c, cax=cax)
+    colorbar = fig.colorbar(c, cax=cax)
+    colorbar.ax.hlines(average_value, 0, 1, color="r")
     ax.set_title(title)
     return fig, ax, cax
 
