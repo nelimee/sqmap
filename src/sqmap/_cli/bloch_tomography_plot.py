@@ -6,7 +6,9 @@ import pickle
 import numpy
 import matplotlib.pyplot as plt
 
-from sqmap.visualisation.flatmap import plot_bloch_vector_displacement_arrow_field_2d
+from sqmap.visualisation.flatmap import (
+    plot_bloch_vector_displacement_arrow_field_2d,
+)
 
 
 def get_data(

@@ -3,6 +3,9 @@ import typing as ty
 import numpy
 import scipy.interpolate
 import matplotlib.pyplot as plt
+from matplotlib.figure import Figure
+from matplotlib.axes import Axes
+
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 
 from qiskit.quantum_info.states import DensityMatrix, state_fidelity
@@ -42,9 +45,9 @@ def plot_over_bloch_sphere_2d(
         [numpy.ndarray, numpy.ndarray], float
     ] = _compute_infidelity,
     title: ty.Optional[str] = None,
-    fig=None,
-    ax=None,
-    cax=None,
+    fig: ty.Optional[Figure] = None,
+    ax: ty.Optional[Axes] = None,
+    cax: ty.Optional[Axes] = None,
     clabel: ty.Optional[str] = None,
     vmin: float = None,
     vmax: float = None,
