@@ -35,7 +35,7 @@ def account_for_periodicity(
     return x, y, z
 
 
-def plot_bloch_vector_2d(
+def plot_over_bloch_sphere_2d(
     ideal_points_cartesian: ty.List[numpy.ndarray],
     density_matrices: ty.List[numpy.ndarray],
     compute_z_data: ty.Callable[
@@ -49,11 +49,7 @@ def plot_bloch_vector_2d(
     vmin: float = None,
     vmax: float = None,
 ):
-    """Plot a 2-dimensional heatmap with displacement arrows.
-
-    The displacement arrows that represent the displacement between the ideally
-    prepared state and the reconstructed one are plotted above the heatmap that
-    represents the 2-norm of the reconstructed bloch vector.
+    """Plot the data computed by compute_z_data on a 2-dimensional heatmap.
 
     :param ideal_points_cartesian: the points that have been prepared using quantum
         gates and that should ideally be retrieved via state tomography.
@@ -168,7 +164,7 @@ def plot_bloch_vector_displacement_arrow_field_2d(
     :param vmin: minimum value for the colorbar.
     :param vmax: maximum value for the colorbar.
     """
-    fig, ax, cax = plot_bloch_vector_2d(
+    fig, ax, cax = plot_over_bloch_sphere_2d(
         ideal_points_cartesian,
         density_matrices,
         compute_z_data=compute_z_data,

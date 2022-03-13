@@ -14,7 +14,7 @@ from sqt.fit.lssr import post_process_tomography_results_lssr
 from sqt.fit.exact import get_one_qubit_exact_density_matrix
 from sqt.basis.equidistant import get_approximately_equidistant_circuits
 
-from sqmap.visualisation.flatmap import plot_bloch_vector_2d
+from sqmap.visualisation.flatmap import plot_over_bloch_sphere_2d
 
 N = 1000
 METHODS = {
@@ -67,7 +67,7 @@ fig, axes = plt.subplots(2, 2)
 axes = axes.flatten()
 
 for method, ax in zip(METHODS, axes):
-    plot_bloch_vector_2d(
+    plot_over_bloch_sphere_2d(
         points,
         [dm[method][0] for dm in density_matrices],
         fig=fig,

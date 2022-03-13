@@ -17,7 +17,7 @@ from sqt.fit.exact import get_one_qubit_exact_density_matrix
 from sqt.basis.equidistant import get_approximately_equidistant_circuits
 from sqt.execution import execute
 
-from sqmap.visualisation.flatmap import plot_bloch_vector_2d
+from sqmap.visualisation.flatmap import plot_over_bloch_sphere_2d
 
 print("Recovering data from IBMQ...")
 if not IBMQ.active_account():
@@ -85,7 +85,7 @@ fig, axes = plt.subplots(len(BASIS), len(TOMOGRAPHY_METHODS))
 qubit_index = 0
 for basis_index, basis in enumerate(BASIS):
     for method_index, method in enumerate(TOMOGRAPHY_METHODS):
-        plot_bloch_vector_2d(
+        plot_over_bloch_sphere_2d(
             points,
             [
                 density_matrices[basis.name][method][i][qubit_index]

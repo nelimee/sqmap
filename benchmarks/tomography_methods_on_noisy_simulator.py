@@ -15,7 +15,7 @@ from sqt.fit.exact import get_one_qubit_exact_density_matrix
 from sqt.execution import execute
 from sqt.basis.equidistant import get_approximately_equidistant_circuits
 
-from sqmap.visualisation.flatmap import plot_bloch_vector_2d
+from sqmap.visualisation.flatmap import plot_over_bloch_sphere_2d
 
 print("Recovering data from IBMQ...")
 if not IBMQ.active_account():
@@ -75,7 +75,7 @@ for qubit_index in range(qubit_number):
     fig, axes = plt.subplots(2, 2)
     axes = axes.flatten()
     for method, ax in zip(METHODS, axes):
-        plot_bloch_vector_2d(
+        plot_over_bloch_sphere_2d(
             points,
             [dm[method][qubit_index] for dm in density_matrices],
             fig=fig,
