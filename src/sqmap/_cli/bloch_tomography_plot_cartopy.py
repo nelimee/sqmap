@@ -5,6 +5,7 @@ import pickle
 
 import numpy
 import matplotlib.pyplot as plt
+from qiskit.quantum_info.states.densitymatrix import DensityMatrix
 
 from sqmap.visualisation.flatmap_cartopy import plot_over_projected_bloch_sphere_2d
 
@@ -24,6 +25,16 @@ def get_data(
         data["basis_name"],
         data["post_processing_method"],
     )
+
+
+# def compute_z_data(ideal: numpy.ndarray, obtained: numpy.ndarray) -> float:
+#     from qiskit.opflow import Zero, One
+#     from qiskit.quantum_info.states import DensityMatrix, state_fidelity
+
+#     state = numpy.ones((2,)) / numpy.sqrt(2)
+#     rho = numpy.outer(state, state)
+
+#     return 1 - state_fidelity(DensityMatrix(rho), DensityMatrix(ideal), validate=False)
 
 
 def main():
