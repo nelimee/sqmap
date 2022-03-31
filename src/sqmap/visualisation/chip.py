@@ -4,7 +4,7 @@ import numpy
 import matplotlib.pyplot as plt
 
 from sqmap.backends import QubitPlacement, get_qubit_placement
-from sqmap.visualisation.flatmap import plot_bloch_vector_displacement_arrow_field_2d
+from sqmap.visualisation.flatmap_cartopy import plot_over_projected_bloch_sphere_2d
 
 
 def plot_whole_chip_view(
@@ -25,13 +25,19 @@ def plot_whole_chip_view(
             f" and provided data ({len(density_matrices)})"
         )
 
-    fig, axes = plt.subplots(placement.max_y + 1, placement.max_x + 1)
+    fig_size = (placement.max_y + 1, placement.max_x + 1)
+    fig, axes = plt.subplots(*fig_size)
     fig.set_tight_layout(True)
     for qubit_index, (x, y) in enumerate(placement.positions):
         ideal_points = [dm[0] for dm in density_matrices[qubit_index]]
         density_matrices_on_points = [dm[1] for dm in density_matrices[qubit_index]]
-        plot_bloch_vector_displacement_arrow_field_2d(
-            ideal_points, density_matrices_on_points, fig=fig, ax=axes[y, x]
+        plot_over_projected_bloch_sphere_2d(
+            ideal_points,
+            density_matrices_on_points,
+            fig=fig,
+            ax=axes[y, x],
+            figure_subplots_indices=fig_size,
+            ax_index=y * fig_size[1] + x + 1,
         )
     all_axes: ty.Set[ty.Tuple[int, int]] = {
         (i, j) for i in range(placement.max_x + 1) for j in range(placement.max_y + 1)
