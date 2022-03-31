@@ -1,3 +1,5 @@
+import typing as ty
+
 import numpy
 
 from sqt import _constants
@@ -109,3 +111,12 @@ def cartesian2density(x: float, y: float, z: float) -> numpy.ndarray:
     ), f"The given vector should be in the unit sphere. {coordinates} is not."
 
     return bloch_vector_to_density_matrix(coordinates)
+
+
+def spherical2geographic(
+    theta: numpy.ndarray, phi: numpy.ndarray
+) -> ty.Tuple[numpy.ndarray, numpy.ndarray]:
+    lat = 90 - (theta * 360 / (2 * numpy.pi))
+    lon = phi * 360 / (2 * numpy.pi)
+    lon[lon > 180] -= 360
+    return lat, lon
