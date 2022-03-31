@@ -24,18 +24,11 @@ def _compute_infidelity(ideal: numpy.ndarray, approximated: numpy.ndarray) -> fl
 
 
 def account_for_periodicity(
-    X: numpy.ndarray, Y: numpy.ndarray, Z: numpy.ndarray
-) -> ty.Tuple[numpy.ndarray, numpy.ndarray, numpy.ndarray]:
-    # For angles that are very close to -pi or pi, we duplicate the values in order to
-    # have a "kind of periodicity" when plotting.
-    (indices_minus_pi,) = numpy.nonzero(numpy.isclose(Y, -numpy.pi))
-    (indices_plus_pi,) = numpy.nonzero(numpy.isclose(Y, numpy.pi))
-    x = numpy.concatenate([X, X[indices_minus_pi], X[indices_plus_pi]])
-    y = numpy.concatenate(
-        [Y, Y[indices_minus_pi] + 2 * numpy.pi, Y[indices_plus_pi] - 2 * numpy.pi]
-    )
-    z = numpy.concatenate([Z, Z[indices_minus_pi], Z[indices_plus_pi]])
-    return x, y, z
+    X: numpy.ndarray, Y: numpy.ndarray, *Zs: numpy.ndarray, increment: float
+) -> ty.Tuple[numpy.ndarray, numpy.ndarray, ty.List[numpy.ndarray]]:
+    x = numpy.concatenate([X - increment, X, X + increment])
+    y = numpy.concatenate([Y, Y, Y])
+    return x, y, [numpy.concatenate([Z, Z, Z]) for Z in Zs]
 
 
 def plot_over_bloch_sphere_2d(
@@ -95,7 +88,7 @@ def plot_over_bloch_sphere_2d(
     )
 
     average_value: float = numpy.mean(Z)
-    X, Y, Z = account_for_periodicity(X, Y, Z)
+    X, Y, (Z,) = account_for_periodicity(X, Y, Z, increment=2 * numpy.pi)
     # We might not have a lot of points. In order to have a visually
     # good-looking graph, we interpolate the results on a finer "grid"
     # composed of 400 points.
@@ -202,8 +195,8 @@ def plot_bloch_vector_displacement_arrow_field_2d(
     V[V < -numpy.pi] += 2 * numpy.pi
     V[V > numpy.pi] -= 2 * numpy.pi
 
-    _, _, U = account_for_periodicity(X, Y, U)
-    X, Y, V = account_for_periodicity(X, Y, V)
+    _, _, U = account_for_periodicity(X, Y, U, increment=2 * numpy.pi)
+    X, Y, V = account_for_periodicity(X, Y, V, increment=2 * numpy.pi)
 
     # Plot the displacement vectors.
     ax.quiver(
