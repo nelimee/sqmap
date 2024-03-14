@@ -1,19 +1,16 @@
 import typing as ty
 
+import matplotlib.pyplot as plt
 import numpy
 import scipy.interpolate
-import matplotlib.pyplot as plt
-from matplotlib.figure import Figure
 from matplotlib.axes import Axes
-
+from matplotlib.figure import Figure
 from mpl_toolkits.axes_grid1 import make_axes_locatable
-
 from qiskit.quantum_info.states import DensityMatrix, state_fidelity
-
 from sqmap.visualisation.transformers import (
     cartesian2density,
-    density2spherical,
     cartesian2spherical,
+    density2spherical,
 )
 
 
@@ -24,26 +21,29 @@ def _compute_infidelity(ideal: numpy.ndarray, approximated: numpy.ndarray) -> fl
 
 
 def account_for_periodicity(
-    X: numpy.ndarray, Y: numpy.ndarray, *Zs: numpy.ndarray, increment: float
-) -> ty.Tuple[numpy.ndarray, numpy.ndarray, ty.List[numpy.ndarray]]:
+    X: numpy.ndarray,
+    Y: numpy.ndarray,
+    *Zs: numpy.ndarray,
+    increment: float = 2 * numpy.pi,
+) -> tuple[numpy.ndarray, numpy.ndarray, list[numpy.ndarray]]:
     x = numpy.concatenate([X - increment, X, X + increment])
     y = numpy.concatenate([Y, Y, Y])
     return x, y, [numpy.concatenate([Z, Z, Z]) for Z in Zs]
 
 
 def plot_over_bloch_sphere_2d(
-    ideal_points_cartesian: ty.List[numpy.ndarray],
-    density_matrices: ty.List[numpy.ndarray],
+    ideal_points_cartesian: list[numpy.ndarray],
+    density_matrices: list[numpy.ndarray],
     compute_z_data: ty.Callable[
         [numpy.ndarray, numpy.ndarray], float
     ] = _compute_infidelity,
-    title: ty.Optional[str] = None,
+    title: str = "",
     fig: ty.Optional[Figure] = None,
     ax: ty.Optional[Axes] = None,
     cax: ty.Optional[Axes] = None,
     clabel: ty.Optional[str] = None,
-    vmin: float = None,
-    vmax: float = None,
+    vmin: float | None = None,
+    vmax: float | None = None,
 ):
     """Plot the data computed by compute_z_data on a 2-dimensional heatmap.
 
@@ -66,6 +66,8 @@ def plot_over_bloch_sphere_2d(
     """
     if fig is None or ax is None:
         fig, ax = plt.subplots()
+    assert ax is not None
+
     # Compute the displacement vectors
     ideal_points_spherical = numpy.array(
         [cartesian2spherical(*p) for p in ideal_points_cartesian]
@@ -87,7 +89,7 @@ def plot_over_bloch_sphere_2d(
         ]
     )
 
-    average_value: float = numpy.mean(Z)
+    average_value = float(numpy.mean(Z))
     X, Y, (Z,) = account_for_periodicity(X, Y, Z, increment=2 * numpy.pi)
     # We might not have a lot of points. In order to have a visually
     # good-looking graph, we interpolate the results on a finer "grid"
@@ -120,6 +122,7 @@ def plot_over_bloch_sphere_2d(
     if cax is None:
         divider = make_axes_locatable(ax)
         cax = divider.append_axes("right", size="5%", pad=0.05)
+    assert cax is not None
     if clabel is not None:
         cax.set_title(clabel)
     colorbar = fig.colorbar(c, cax=cax)
@@ -129,17 +132,17 @@ def plot_over_bloch_sphere_2d(
 
 
 def plot_bloch_vector_displacement_arrow_field_2d(
-    ideal_points_cartesian: ty.List[numpy.ndarray],
-    density_matrices: ty.List[numpy.ndarray],
+    ideal_points_cartesian: list[numpy.ndarray],
+    density_matrices: list[numpy.ndarray],
     compute_z_data: ty.Callable[
         [numpy.ndarray, numpy.ndarray], float
     ] = _compute_infidelity,
-    title: ty.Optional[str] = None,
+    title: str = "",
     fig=None,
     ax=None,
     cax=None,
-    vmin: float = None,
-    vmax: float = None,
+    vmin: float | None = None,
+    vmax: float | None = None,
 ):
     """Plot a 2-dimensional heatmap with displacement arrows.
 

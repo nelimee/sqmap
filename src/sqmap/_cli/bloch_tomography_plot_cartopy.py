@@ -1,12 +1,10 @@
 import argparse
+import pickle
 import typing as ty
 from pathlib import Path
-import pickle
 
-import numpy
 import matplotlib.pyplot as plt
-from qiskit.quantum_info.states.densitymatrix import DensityMatrix
-
+import numpy
 from sqmap.visualisation.flatmap_cartopy import plot_over_projected_bloch_sphere_2d
 
 

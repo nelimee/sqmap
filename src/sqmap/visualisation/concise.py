@@ -1,26 +1,26 @@
 import typing as ty
 
-import numpy
 import matplotlib.pyplot as plt
-
-from sqmap.visualisation.flatmap import account_for_periodicity, _compute_infidelity
+import numpy
+from sqmap.visualisation.flatmap import _compute_infidelity, account_for_periodicity
 from sqmap.visualisation.transformers import (
     cartesian2density,
-    density2spherical,
     cartesian2spherical,
+    density2spherical,
     spherical2geographic,
 )
 
 
 def plot_bloch_concise_vector_displacement_arrow_field_2d(
-    ideal_points_cartesian: ty.List[numpy.ndarray],
-    density_matrices: ty.List[numpy.ndarray],
+    ideal_points_cartesian: list[numpy.ndarray],
+    density_matrices: list[numpy.ndarray],
     compute_z_data: ty.Callable[
         [numpy.ndarray, numpy.ndarray], float
     ] = _compute_infidelity,
     fig=None,
     ax=None,
     cax=None,
+    title: str = "",
 ):
     """"""
     if fig is None or ax is None:

@@ -1,14 +1,11 @@
-import typing as ty
-
-import numpy
 import matplotlib.pyplot as plt
-
+import numpy
 from sqmap.backends import QubitPlacement, get_qubit_placement
 from sqmap.visualisation.flatmap_cartopy import plot_over_projected_bloch_sphere_2d
 
 
 def plot_whole_chip_view(
-    density_matrices: ty.List[ty.List[ty.Tuple[numpy.ndarray, numpy.ndarray]]],
+    density_matrices: list[list[tuple[numpy.ndarray, numpy.ndarray]]],
     processor_type: str,
 ):
     """Plot generic information about the whole chip.
@@ -39,7 +36,7 @@ def plot_whole_chip_view(
             figure_subplots_indices=fig_size,
             ax_index=y * fig_size[1] + x + 1,
         )
-    all_axes: ty.Set[ty.Tuple[int, int]] = {
+    all_axes: set[tuple[int, int]] = {
         (i, j) for i in range(placement.max_x + 1) for j in range(placement.max_y + 1)
     }
     for x, y in all_axes.difference(placement.positions):

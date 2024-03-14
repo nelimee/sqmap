@@ -1,11 +1,10 @@
-import warnings
 import typing as ty
+import warnings
 
+import matplotlib.pyplot as plt
 import numpy
 import scipy.interpolate
-import matplotlib.pyplot as plt
 from matplotlib.figure import Figure
-
 from sqmap.visualisation.flatmap import _compute_infidelity, account_for_periodicity
 from sqmap.visualisation.transformers import (
     cartesian2density,
@@ -19,17 +18,17 @@ try:
     from cartopy.mpl.geoaxes import GeoAxes
 
     def plot_over_projected_bloch_sphere_2d(
-        ideal_points_cartesian: ty.List[numpy.ndarray],
-        density_matrices: ty.List[numpy.ndarray],
+        ideal_points_cartesian: list[numpy.ndarray],
+        density_matrices: list[numpy.ndarray],
         compute_z_data: ty.Callable[
             [numpy.ndarray, numpy.ndarray], float
         ] = _compute_infidelity,
-        projection: ty.Optional[ccrs.Projection] = None,
-        fig: ty.Optional[Figure] = None,
-        ax: ty.Optional[GeoAxes] = None,
-        title: ty.Optional[str] = None,
-        figure_subplots_indices: ty.Optional[ty.Tuple[int, int]] = None,
-        ax_index: ty.Optional[int] = None,
+        projection: ccrs.Projection | None = None,
+        fig: Figure | None = None,
+        ax: GeoAxes | None = None,
+        title: str | None = None,
+        figure_subplots_indices: tuple[int, int] | None = None,
+        ax_index: int | None = None,
     ):
         """Plot the data computed by compute_z_data on a 2-dimensional heatmap.
 
@@ -116,7 +115,7 @@ try:
         V[V > 180] -= 360
 
         lon_ideal, lat_ideal, (Z, U, V) = account_for_periodicity(
-            360, lon_ideal, lat_ideal, Z, U, V
+            lon_ideal, lat_ideal, Z, U, V
         )
 
         # Plot each of the ideal points as black dots.

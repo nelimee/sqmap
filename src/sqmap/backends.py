@@ -1,8 +1,7 @@
 """Module to help visualising tomography results over a whole backend."""
 
-from dataclasses import dataclass
-import typing as ty
 import warnings
+from dataclasses import dataclass
 
 import matplotlib.pyplot as plt
 
@@ -10,8 +9,8 @@ import matplotlib.pyplot as plt
 @dataclass
 class QubitPlacement:
     qubit_number: int
-    positions: ty.List[ty.Tuple[int, int]]
-    supported_processor_types: ty.List[str]
+    positions: list[tuple[int, int]]
+    supported_processor_types: list[str]
 
     def __post_init__(self):
         if not self.qubit_number == len(self.positions):
@@ -143,7 +142,7 @@ class Shape27Qubits(QubitPlacement):
 
 class Shape65Qubits(QubitPlacement):
     def __init__(self):
-        positions: ty.List[ty.Tuple[int, int]] = [(i, 0) for i in range(10)]
+        positions: list[tuple[int, int]] = [(i, 0) for i in range(10)]
         positions += [(0, 1), (4, 1), (8, 1)]
         positions += [(i, 2) for i in range(11)]
         positions += [(2, 3), (6, 3), (10, 3)]
@@ -162,7 +161,7 @@ class Shape65Qubits(QubitPlacement):
 
 class Shape127Qubits(QubitPlacement):
     def __init__(self):
-        positions: ty.List[ty.Tuple[int, int]] = [(i, 0) for i in range(14)]
+        positions: list[tuple[int, int]] = [(i, 0) for i in range(14)]
         positions += [(0, 1), (4, 1), (8, 1), (12, 1)]
         positions += [(i, 2) for i in range(15)]
         positions += [(2, 3), (6, 3), (10, 3), (14, 3)]
@@ -185,7 +184,7 @@ class Shape127Qubits(QubitPlacement):
         )
 
 
-_PLACEMENTS: ty.Dict[str, QubitPlacement] = {}
+_PLACEMENTS: dict[str, QubitPlacement] = {}
 for placement_class in [
     OneQubit,
     TShape5Qubits,

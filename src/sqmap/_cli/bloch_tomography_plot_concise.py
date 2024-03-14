@@ -1,11 +1,10 @@
 import argparse
+import pickle
 import typing as ty
 from pathlib import Path
-import pickle
 
-import numpy
 import matplotlib.pyplot as plt
-
+import numpy
 from sqmap.visualisation.concise import (
     plot_bloch_concise_vector_displacement_arrow_field_2d,
 )
