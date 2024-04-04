@@ -2,8 +2,8 @@ import typing as ty
 import numpy
 import matplotlib.pyplot as plt
 
-from qiskit import QuantumCircuit, execute
-from qiskit.providers.aer import AerSimulator
+from qiskit import QuantumCircuit
+from qiskit_aer import AerSimulator
 from qiskit.quantum_info.states import DensityMatrix, state_fidelity
 
 from sqt.circuits import one_qubit_tomography_circuits
@@ -37,7 +37,7 @@ tomography_circuits: ty.List[ty.List[QuantumCircuit]] = [
 flattened_circuits: ty.List[QuantumCircuit] = sum(tomography_circuits, start=[])
 
 print("Simulating circuits...")
-result = execute(flattened_circuits, simulator, shots=2 ** 10).result()
+result = simulator.run(flattened_circuits, shots=2**10).result()
 
 print("Computing density matrices...")
 density_matrices: ty.List[ty.Dict[str, ty.List[numpy.ndarray]]] = list()

@@ -2,8 +2,9 @@ import typing as ty
 import numpy
 import matplotlib.pyplot as plt
 
-from qiskit import QuantumCircuit, IBMQ
-from qiskit.providers.aer import AerSimulator
+from qiskit import QuantumCircuit
+from qiskit_aer import AerSimulator
+from qiskit_ibm_runtime import QiskitRuntimeService
 from qiskit.quantum_info.states import state_fidelity
 
 from sqt.circuits import one_qubit_tomography_circuits
@@ -17,14 +18,22 @@ from sqt.basis.equidistant import get_approximately_equidistant_circuits
 
 from sqmap.visualisation.flatmap import plot_over_bloch_sphere_2d
 
-print("Recovering data from IBMQ...")
-if not IBMQ.active_account():
-    IBMQ.load_account()
-provider = IBMQ.get_provider(hub="ibm-q-lanl", group="lanl", project="quantum-simulati")
-backend = provider.get_backend("ibmq_bogota")
+# %%
+hub = "ibm-q-lanl"
+group = "lanl"
+project = "quantum-simulati"
+backend_name = "ibm_algiers"
 
+print(f"Recovering IBMQ backend {backend_name} with {hub}/{group}/{project}.")
+service = QiskitRuntimeService(
+    channel="ibm_quantum", instance=f"{hub}/{group}/{project}"
+)
+if not service.active_account():
+    raise RuntimeError(f"Could not load account with '{hub}' '{group}' '{project}'.")
+backend = service.get_backend("ibm_algiers")
 
-N = 10
+# %%
+N = 100
 METHODS = {
     "grad": post_process_tomography_results_grad,
     "mle": post_process_tomography_results_mle,
@@ -36,7 +45,7 @@ print("Creating circuits...")
 raw_circuits: ty.List[QuantumCircuit] = get_approximately_equidistant_circuits(N)
 
 print("Creating tomography circuits...")
-qubit_number = backend.configuration().num_qubits
+qubit_number = 1
 basis = TetrahedralMeasurementBasis()
 tomography_circuits: ty.List[ty.List[QuantumCircuit]] = [
     one_qubit_tomography_circuits(raw_circuit, basis, qubit_number=qubit_number)
@@ -44,9 +53,11 @@ tomography_circuits: ty.List[ty.List[QuantumCircuit]] = [
 ]
 flattened_circuits: ty.List[QuantumCircuit] = sum(tomography_circuits, start=[])
 
+# %%
 print("Simulating circuits...")
-result = execute(flattened_circuits, simulator, shots=2 ** 10)
+result = execute(flattened_circuits, simulator, shots=2**10)
 
+# %%
 print("Computing density matrices...")
 density_matrices: ty.List[ty.Dict[str, ty.List[numpy.ndarray]]] = list()
 fidelities: ty.List[ty.Dict[str, ty.List[float]]] = list()
@@ -70,6 +81,7 @@ for circuit in raw_circuits:
             )
         ]
 
+# %%
 print("Plotting...")
 for qubit_index in range(qubit_number):
     fig, axes = plt.subplots(2, 2)

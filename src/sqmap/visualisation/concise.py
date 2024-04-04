@@ -62,7 +62,7 @@ def plot_bloch_concise_vector_displacement_arrow_field_2d(
     V[V > 180] -= 360
 
     lon_ideal, lat_ideal, (Z, U, V) = account_for_periodicity(
-        360, lon_ideal, lat_ideal, Z, U, V
+        lon_ideal, lat_ideal, Z, U, V, increment=360
     )
 
     for u, v in zip(U, V):

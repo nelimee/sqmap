@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy
+
 from sqmap.backends import QubitPlacement, get_qubit_placement
 from sqmap.visualisation.flatmap_cartopy import plot_over_projected_bloch_sphere_2d
 
@@ -24,7 +25,7 @@ def plot_whole_chip_view(
 
     fig_size = (placement.max_y + 1, placement.max_x + 1)
     fig, axes = plt.subplots(*fig_size)
-    fig.set_tight_layout(True)
+    fig.tight_layout()
     for qubit_index, (x, y) in enumerate(placement.positions):
         ideal_points = [dm[0] for dm in density_matrices[qubit_index]]
         density_matrices_on_points = [dm[1] for dm in density_matrices[qubit_index]]

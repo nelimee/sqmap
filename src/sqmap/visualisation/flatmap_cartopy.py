@@ -13,6 +13,7 @@ from sqmap.visualisation.transformers import (
     spherical2geographic,
 )
 
+
 try:
     import cartopy.crs as ccrs
     from cartopy.mpl.geoaxes import GeoAxes
