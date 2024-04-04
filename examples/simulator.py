@@ -11,6 +11,7 @@ from sqt.fit.mle import post_process_tomography_results_mle
 
 from sqt.basis.equidistant import get_approximately_equidistant_circuits
 from sqmap.visualisation.flatmap import plot_bloch_vector_displacement_arrow_field_2d
+from sqmap.visualisation.flatmap_cartopy import plot_over_projected_bloch_sphere_2d
 
 # %%
 print("Initialising a perfect simulator.")
@@ -48,5 +49,6 @@ for i, circuit in enumerate(circuits):
     points.append(point)
     density_matrices.append(density_matrices_all_qubits[i][qubit_index])
 
+plot_over_projected_bloch_sphere_2d(points, density_matrices)
 plot_bloch_vector_displacement_arrow_field_2d(points, density_matrices)
 plt.show()
