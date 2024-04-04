@@ -1,0 +1,54 @@
+[build-system]
+requires = ["setuptools >= 61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "sqmap"
+description = "Single Qubit MAPping package developped during the Quantum Computing Summer School 2021 at Los Alamos National Laboratory"
+authors = [{ name = "Adrien Suau", email = "adrien.suau+sqmap@protonmail.com" }]
+maintainers = [
+    { name = "Adrien Suau", email = "adrien.suau+sqmap@protonmail.com" },
+]
+
+readme = "README.md"
+keywords = ["quantum", "tomography", "single qubit", "mapping", "visualisation"]
+dynamic = ["version"]
+dependencies = [
+    "qiskit ~= 1.0",
+    "numpy",
+    "scipy",
+    "matplotlib",
+    "sqt",
+    "cartopy",
+]
+classifiers = [
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "Operating System :: Microsoft :: Windows",
+    "Operating System :: MacOS",
+    "Operating System :: POSIX :: Linux",
+    "Programming Language :: Python :: 3 :: Only",
+    "Topic :: Scientific/Engineering",
+]
+
+
+[project.urls]
+Homepage = "https://github.com/nelimee/sqmap"
+Repository = "https://github.com/nelimee/sqmap"
+Issues = "https://github.com/nelimee/sqmap/issues"
+
+[project.scripts]
+sqmap_bloch_tomography_plot = "sqmap._cli.bloch_tomography_plot:main"
+sqmap_bloch_tomography_plot_concise = "sqmap._cli.bloch_tomography_plot_concise:main"
+sqmap_bloch_tomography_plot_cartopy = "sqmap._cli.bloch_tomography_plot_cartopy:main"
+sqmap_bloch_tomography_chip_plot = "sqmap._cli.bloch_tomography_chip_plot:main"
+sqmap_shot_dependency_plot = "sqmap._cli.precision_evolution:main"
+
+[tool.setuptools.dynamic]
+version = { attr = "sqmap.__version__" }
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+sqt = ["*.txt", "*.rst", "py.typed"]
