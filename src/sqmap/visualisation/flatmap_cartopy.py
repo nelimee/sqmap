@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 import numpy
 import scipy.interpolate
 from matplotlib.figure import Figure
+
 from sqmap.visualisation.flatmap import _compute_infidelity, account_for_periodicity
 from sqmap.visualisation.transformers import (
     cartesian2density,
@@ -12,7 +13,6 @@ from sqmap.visualisation.transformers import (
     density2spherical,
     spherical2geographic,
 )
-
 
 try:
     import cartopy.crs as ccrs
@@ -64,17 +64,11 @@ try:
             # projection = ccrs.Mollweide()
 
         if fig is None or ax is None:
-            fig, ax = plt.subplots(subplot_kw={"projection": projection})
-            ax.set_global()
-        elif (
-            not isinstance(ax, GeoAxes)
-            and figure_subplots_indices is not None
-            and ax_index is not None
-        ):
-            fig.delaxes(ax)
-            ax = fig.add_subplot(
-                *figure_subplots_indices, ax_index, projection=projection
+            fig, ax = ty.cast(
+                tuple[Figure, GeoAxes],
+                plt.subplots(subplot_kw={"projection": projection}),
             )
+            ax.set_global()
         else:
             raise NotImplementedError(
                 "Case not implemented. Read the docstring and make sure "
@@ -153,7 +147,7 @@ try:
             width=0.002,
         )
         fig.colorbar(filled_c, orientation="horizontal", format="%1.1e")
-        ax.gridlines(draw_labels="x")
+        ax.gridlines(draw_labels="x")  # type: ignore
         if title is not None:
             ax.set_title(title)
 

@@ -1,20 +1,19 @@
 import typing as ty
-import numpy
+
 import matplotlib.pyplot as plt
-
+import numpy
 from qiskit import QuantumCircuit
-from qiskit_aer import AerSimulator
 from qiskit.quantum_info.states import DensityMatrix, state_fidelity
-
-from sqt.circuits import one_qubit_tomography_circuits
-from sqt.basis.tetrahedral import TetrahedralMeasurementBasis
-from sqt.fit.grad import post_process_tomography_results_grad
-from sqt.fit.mle import post_process_tomography_results_mle
-from sqt.fit.lssr import post_process_tomography_results_lssr
-from sqt.fit.exact import get_one_qubit_exact_density_matrix
-from sqt.basis.equidistant import get_approximately_equidistant_circuits
+from qiskit_aer import AerSimulator
 
 from sqmap.visualisation.flatmap import plot_over_bloch_sphere_2d
+from sqt.basis.equidistant import get_approximately_equidistant_circuits
+from sqt.basis.tetrahedral import TetrahedralMeasurementBasis
+from sqt.circuits import one_qubit_tomography_circuits
+from sqt.fit.exact import get_one_qubit_exact_density_matrix
+from sqt.fit.grad import post_process_tomography_results_grad
+from sqt.fit.lssr import post_process_tomography_results_lssr
+from sqt.fit.mle import post_process_tomography_results_mle
 
 N = 1000
 METHODS = {
@@ -56,7 +55,9 @@ for circuit in raw_circuits:
         )
 
         fidelities[-1][method] = [
-            state_fidelity(exact, approximation, validate=False)
+            state_fidelity(
+                DensityMatrix(exact), DensityMatrix(approximation), validate=False
+            )
             for exact, approximation in zip(
                 density_matrices[-1]["exact"], density_matrices[-1][method]
             )

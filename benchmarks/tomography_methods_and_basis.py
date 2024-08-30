@@ -1,24 +1,23 @@
 import typing as ty
-import numpy
-import matplotlib.pyplot as plt
 
+import matplotlib.pyplot as plt
+import numpy
 from qiskit import QuantumCircuit
 from qiskit_aer import AerSimulator
 from qiskit_ibm_runtime import QiskitRuntimeService
-from qiskit.quantum_info.states import state_fidelity
-
-from sqt.circuits import one_qubit_tomography_circuits
-from sqt.basis.equidistant import EquidistantMeasurementBasis
-from sqt.basis.pauli import PauliMeasurementBasis
-from sqt.basis.tetrahedral import TetrahedralMeasurementBasis
-from sqt.fit.grad import post_process_tomography_results_grad
-from sqt.fit.mle import post_process_tomography_results_mle
-from sqt.fit.lssr import post_process_tomography_results_lssr
-from sqt.fit.exact import get_one_qubit_exact_density_matrix
-from sqt.basis.equidistant import get_approximately_equidistant_circuits
-from sqt.execution import execute
 
 from sqmap.visualisation.flatmap import plot_over_bloch_sphere_2d
+from sqt.basis.equidistant import (
+    EquidistantMeasurementBasis,
+    get_approximately_equidistant_circuits,
+)
+from sqt.basis.tetrahedral import TetrahedralMeasurementBasis
+from sqt.circuits import one_qubit_tomography_circuits
+from sqt.execution import execute
+from sqt.fit.exact import get_one_qubit_exact_density_matrix
+from sqt.fit.grad import post_process_tomography_results_grad
+from sqt.fit.lssr import post_process_tomography_results_lssr
+from sqt.fit.mle import post_process_tomography_results_mle
 
 # %%
 hub = "ibm-q-lanl"
@@ -31,7 +30,8 @@ service = QiskitRuntimeService(
     channel="ibm_quantum", instance=f"{hub}/{group}/{project}"
 )
 if not service.active_account():
-    raise RuntimeError(f"Could not load account with '{hub}' '{group}' '{project}'.")
+    raise RuntimeError(f"Could not load account with '{
+                       hub}' '{group}' '{project}'.")
 backend = service.get_backend("ibm_algiers")
 
 # %%
